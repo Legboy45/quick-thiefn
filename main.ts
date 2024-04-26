@@ -850,6 +850,89 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Money, function (sprite, otherSp
     sprites.destroy(otherSprite)
     Collected_Money += 10
 })
+sprites.onOverlap(SpriteKind.Groundpound, SpriteKind.Money, function (sprite, otherSprite) {
+    Disappear = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Effects)
+    tiles.placeOnTile(Disappear, otherSprite.tilemapLocation())
+    animation.runImageAnimation(
+    Disappear,
+    [img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . . . 1 . . 1 . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . 1 1 . . . . . . . . . . . 
+        . . . . . . . . . . . 1 1 . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . 1 . . 1 . . . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `,img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . 1 . . . . . . 1 . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . 1 1 . . . . . . . . . . . . 
+        . . . . . . . . . . . . 1 1 . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . 1 . . . . . . 1 . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `,img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `],
+    100,
+    false
+    )
+    timer.after(350, function () {
+        sprites.destroy(Disappear)
+    })
+    sprites.destroy(otherSprite)
+    Collected_Money += 10
+})
 function PlayerCreate () {
     mySprite = sprites.create(img`
         . . . . . . f f f f . . . . . . 
@@ -958,9 +1041,6 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Money2, function (sprite, otherS
     Collected_Money += 100
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.chestClosed, function (sprite, location) {
-    if (!(TouchedTreasure)) {
-        mySprite.setVelocity(0, 0)
-    }
     tiles.setTileAt(location, assets.tile`myTile1`)
     characterAnimations.setCharacterAnimationsEnabled(mySprite, false)
     Trophy = sprites.create(img`
@@ -981,6 +1061,8 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.chestClosed, function (sp
         . . . . . . f 4 4 f . . . . . . 
         . . . . . f f f f f f . . . . . 
         `, SpriteKind.Food)
+    Trophy.setFlag(SpriteFlag.GhostThroughTiles, true)
+    Trophy.setFlag(SpriteFlag.GhostThroughWalls, true)
     tiles.placeOnTile(Trophy, location)
     for (let index = 0; index < 17; index++) {
         Trophy.y += -1
@@ -1086,6 +1168,7 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.chestClosed, function (sp
         )
         timer.after(1250, function () {
             characterAnimations.setCharacterAnimationsEnabled(mySprite, true)
+            Trophy.follow(mySprite, 125)
             TouchedTreasure = true
             for (let value of tiles.getTilesByType(assets.tile`myTile2`)) {
                 tiles.setTileAt(value, assets.tile`myTile3`)
@@ -1332,6 +1415,89 @@ function HUDCreate () {
     MoneyHUD.setFlag(SpriteFlag.RelativeToCamera, true)
     MoneyHUD.z = 5
 }
+sprites.onOverlap(SpriteKind.Dashing, SpriteKind.Money2, function (sprite, otherSprite) {
+    Disappear = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Effects)
+    tiles.placeOnTile(Disappear, otherSprite.tilemapLocation())
+    animation.runImageAnimation(
+    Disappear,
+    [img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . . . 1 . . 1 . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . 1 1 . . . . . . . . . . . 
+        . . . . . . . . . . . 1 1 . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . 1 . . 1 . . . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `,img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . 1 . . . . . . 1 . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . 1 1 . . . . . . . . . . . . 
+        . . . . . . . . . . . . 1 1 . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . 1 . . . . . . 1 . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `,img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `],
+    100,
+    false
+    )
+    timer.after(350, function () {
+        sprites.destroy(Disappear)
+    })
+    sprites.destroy(otherSprite)
+    Collected_Money += 100
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
     sprites.destroy(otherSprite)
 })
@@ -1659,6 +1825,172 @@ function RunningAnim () {
         )
     }
 }
+sprites.onOverlap(SpriteKind.Dashing, SpriteKind.Money, function (sprite, otherSprite) {
+    Disappear = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Effects)
+    tiles.placeOnTile(Disappear, otherSprite.tilemapLocation())
+    animation.runImageAnimation(
+    Disappear,
+    [img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . . . 1 . . 1 . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . 1 1 . . . . . . . . . . . 
+        . . . . . . . . . . . 1 1 . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . 1 . . 1 . . . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `,img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . 1 . . . . . . 1 . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . 1 1 . . . . . . . . . . . . 
+        . . . . . . . . . . . . 1 1 . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . 1 . . . . . . 1 . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `,img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `],
+    100,
+    false
+    )
+    timer.after(350, function () {
+        sprites.destroy(Disappear)
+    })
+    sprites.destroy(otherSprite)
+    Collected_Money += 10
+})
+sprites.onOverlap(SpriteKind.Groundpound, SpriteKind.Money2, function (sprite, otherSprite) {
+    Disappear = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Effects)
+    tiles.placeOnTile(Disappear, otherSprite.tilemapLocation())
+    animation.runImageAnimation(
+    Disappear,
+    [img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . . . 1 . . 1 . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . 1 1 . . . . . . . . . . . 
+        . . . . . . . . . . . 1 1 . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . 1 . . 1 . . . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `,img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . 1 . . . . . . 1 . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . 1 1 . . . . . . . . . . . . 
+        . . . . . . . . . . . . 1 1 . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . 1 . . . . 1 . . . . . 
+        . . . . 1 . . . . . . 1 . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `,img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `],
+    100,
+    false
+    )
+    timer.after(350, function () {
+        sprites.destroy(Disappear)
+    })
+    sprites.destroy(otherSprite)
+    Collected_Money += 100
+})
 function Variables () {
     Collected_Money = 0
     TouchedTreasure = false
@@ -1675,8 +2007,8 @@ let TimeVar: TextSprite = null
 let TimeAlarm: Sprite = null
 let AlarmBgBlinking: Sprite = null
 let mySprite2: Sprite = null
-let Trophy: Sprite = null
 let TouchedTreasure = false
+let Trophy: Sprite = null
 let Collected_Money = 0
 let Disappear: Sprite = null
 let LookingLeft = false
@@ -1738,6 +2070,33 @@ game.onUpdate(function () {
     }
 })
 game.onUpdate(function () {
+    MoneyVarHUD.setText(convertToText("" + Collected_Money + "$"))
+    TimeVar.setText(convertToText("" + Minutes + ":" + Seconds))
+    if (TouchedTreasure) {
+        timer.throttle("ticking timer", 1000, function () {
+            Seconds += -1
+        })
+        timer.throttle("blinkingBG", 2000, function () {
+            AlarmBgBlinking.setFlag(SpriteFlag.Invisible, false)
+            timer.after(1000, function () {
+                AlarmBgBlinking.setFlag(SpriteFlag.Invisible, true)
+            })
+        })
+        TimeVar.setFlag(SpriteFlag.Invisible, false)
+        TimeAlarm.setFlag(SpriteFlag.Invisible, false)
+    } else {
+        TimeVar.setFlag(SpriteFlag.Invisible, true)
+        TimeAlarm.setFlag(SpriteFlag.Invisible, true)
+    }
+    if (Seconds == -1) {
+        Seconds = 59
+        Minutes += -1
+    }
+    if (Minutes == 0 && Seconds == 0) {
+        game.gameOver(false)
+    }
+})
+game.onUpdate(function () {
     if (mySprite.tileKindAt(TileDirection.Left, assets.tile`myTile12`)) {
         if (mySprite.kind() == SpriteKind.Dashing) {
             tiles.setTileAt(mySprite.tilemapLocation().getNeighboringLocation(CollisionDirection.Left), assets.tile`transparency16`)
@@ -1766,33 +2125,6 @@ game.onUpdate(function () {
     }
 })
 game.onUpdate(function () {
-    MoneyVarHUD.setText(convertToText("" + Collected_Money + "$"))
-    TimeVar.setText(convertToText("" + Minutes + ":" + Seconds))
-    if (TouchedTreasure) {
-        timer.throttle("ticking timer", 1000, function () {
-            Seconds += -1
-        })
-        timer.throttle("blinkingBG", 2000, function () {
-            AlarmBgBlinking.setFlag(SpriteFlag.Invisible, false)
-            timer.after(1000, function () {
-                AlarmBgBlinking.setFlag(SpriteFlag.Invisible, true)
-            })
-        })
-        TimeVar.setFlag(SpriteFlag.Invisible, false)
-        TimeAlarm.setFlag(SpriteFlag.Invisible, false)
-    } else {
-        TimeVar.setFlag(SpriteFlag.Invisible, true)
-        TimeAlarm.setFlag(SpriteFlag.Invisible, true)
-    }
-    if (Seconds == -1) {
-        Seconds = 59
-        Minutes += -1
-    }
-    if (Minutes == 0 && Seconds == 0) {
-        game.gameOver(false)
-    }
-})
-game.onUpdate(function () {
     if (TouchedTreasure) {
         RunningAnim2()
     } else {
@@ -1817,6 +2149,13 @@ game.onUpdate(function () {
             mySprite.vx = 0
         }
         Speedforrunning1 = 0
+    }
+})
+game.onUpdate(function () {
+    if (mySprite.tileKindAt(TileDirection.Left, assets.tile`myTile1`)) {
+        if (!(TouchedTreasure)) {
+            mySprite.setVelocity(0, 0)
+        }
     }
 })
 game.onUpdate(function () {
