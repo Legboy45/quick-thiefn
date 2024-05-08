@@ -572,7 +572,7 @@ function LevelCreate () {
         tiles.setCurrentTilemap(tilemap`level2`)
     } else {
         Seconds = 16
-        Minutes = 0
+        Minutes = 1
         tiles.setCurrentTilemap(tilemap`level11`)
     }
     tiles.placeOnRandomTile(mySprite, assets.tile`myTile2`)
